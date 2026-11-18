@@ -4,6 +4,8 @@ Routes English customer support tickets to the right team (one of 10 queues) usi
 
 **Result:** fine-tuned BERT reached **0.579 macro-F1** against **0.507** for the baseline (+7.2 points), with the largest gains on the smaller queues.
 
+**Live demo:** [try it in your browser](https://huggingface.co/spaces/preshanth09/support-ticket-classifier-demo) · **Model:** [preshanth09/support-ticket-classifier](https://huggingface.co/preshanth09/support-ticket-classifier)
+
 ## Problem
 
 Support teams lose time when tickets land in the wrong queue and have to be re-assigned by hand. This project predicts the destination queue from the ticket's subject and body, so a ticket can be routed automatically or a top-3 suggestion can be shown to the agent doing triage.
