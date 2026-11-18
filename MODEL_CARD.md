@@ -15,6 +15,7 @@ metrics:
 `bert-base-uncased` fine-tuned to route English customer support tickets to one of 10 queues.
 
 - Code: https://github.com/im-preshanth/support-ticket-classifier
+- Live demo: https://huggingface.co/spaces/preshanth09/support-ticket-classifier-demo
 
 ## Intended use
 
