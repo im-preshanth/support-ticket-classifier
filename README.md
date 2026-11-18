@@ -74,6 +74,10 @@ F1 by queue:
 
 ![BERT confusion matrix](reports/confusion_matrix.png)
 
+### Published model
+
+The fine-tuned model is on Hugging Face: [preshanth09/support-ticket-classifier](https://huggingface.co/preshanth09/support-ticket-classifier). It comes from a second training run with identical settings and seed, which scored **0.565 macro-F1** (accuracy 0.514) on the same test set. GPU non-determinism causes about one point of variation between runs; the tables above are from the first run (0.579).
+
 ### What the errors show
 
 - Queues with clear vocabulary (billing, HR, outages, sales) are separated well.
@@ -121,7 +125,7 @@ support-ticket-classifier/
 
 - The dataset is **synthetic**, so scores on real company tickets will differ. Retraining on in-house labelled tickets would be required before production use.
 - English only (German tickets were excluded).
-- Single run with one seed; scores would vary slightly across seeds.
+- Scores vary by about one macro-F1 point between training runs (0.579 and 0.565 in two runs with the same settings).
 
 ## Next steps
 
