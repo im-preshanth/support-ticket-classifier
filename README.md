@@ -6,6 +6,8 @@ Routes English customer support tickets to the right team (one of 10 queues) usi
 
 **Live demo:** [try it in your browser](https://huggingface.co/spaces/preshanth09/support-ticket-classifier-demo) · **Model:** [preshanth09/support-ticket-classifier](https://huggingface.co/preshanth09/support-ticket-classifier)
 
+<img src="reports/demo.png" alt="Live demo: a billing ticket routed to Billing and Payments with 96.7% confidence" width="520">
+
 ## Problem
 
 Support teams lose time when tickets land in the wrong queue and have to be re-assigned by hand. This project predicts the destination queue from the ticket's subject and body and suggests the **top-3 queues** to the agent doing triage. At about 51–53% accuracy on unseen tickets, it is meant to speed up triage, not to route tickets without a human check.
