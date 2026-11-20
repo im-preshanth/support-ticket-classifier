@@ -2,17 +2,17 @@
 
 Routes English customer support tickets to the right team (one of 10 queues) using a fine-tuned **BERT** model, benchmarked against a **TF-IDF + logistic regression** baseline on the same held-out test set.
 
-**Result:** fine-tuned BERT reached **0.579 macro-F1** against **0.507** for the baseline (+7.2 points), with the largest gains on the smaller queues.
+**Result:** fine-tuned BERT reached **0.565–0.579 macro-F1** across two training runs, against **0.507** for the baseline, with the largest gains on the smaller queues.
 
 **Live demo:** [try it in your browser](https://huggingface.co/spaces/preshanth09/support-ticket-classifier-demo) · **Model:** [preshanth09/support-ticket-classifier](https://huggingface.co/preshanth09/support-ticket-classifier)
 
 ## Problem
 
-Support teams lose time when tickets land in the wrong queue and have to be re-assigned by hand. This project predicts the destination queue from the ticket's subject and body, so a ticket can be routed automatically or a top-3 suggestion can be shown to the agent doing triage.
+Support teams lose time when tickets land in the wrong queue and have to be re-assigned by hand. This project predicts the destination queue from the ticket's subject and body and suggests the **top-3 queues** to the agent doing triage. At about 51–53% accuracy on unseen tickets, it is meant to speed up triage, not to route tickets without a human check.
 
 ## Data
 
-- **Source:** [`Tobi-Bueck/customer-support-tickets`](https://huggingface.co/datasets/Tobi-Bueck/customer-support-tickets) on Hugging Face (synthetic tickets in English and German).
+- **Source:** [`Tobi-Bueck/customer-support-tickets`](https://huggingface.co/datasets/Tobi-Bueck/customer-support-tickets) on Hugging Face (synthetic tickets in English and German). No manual download is needed: `src/data.py` and the notebook load it with the `datasets` library.
 - **Used:** English tickets only. Input text = subject + body. Removed empty or very short texts and exact duplicates.
 - **After cleaning:** 23,745 tickets across 10 queues, with a median length of 60 words.
 - **Split:** stratified 80 / 10 / 10 (18,996 train, 2,374 validation, 2,375 test), seed 42. Both models are scored on the same test set.
@@ -83,10 +83,13 @@ The fine-tuned model is on Hugging Face: [preshanth09/support-ticket-classifier]
 ### What the errors show
 
 - Queues with clear vocabulary (billing, HR, outages, sales) are separated well.
+- BERT is **not better everywhere**: it scores slightly below the baseline on Technical Support (0.492 vs 0.523) and Product Support (0.424 vs 0.439), the two largest and most overlapping queues. Its gains come from the smaller, more distinctive queues, which is why macro-F1 improves while accuracy rises less.
 - Most errors happen among **Technical Support, IT Support and Product Support**: 24% of IT Support and 26% of Product Support tickets are predicted as Technical Support. These queues describe overlapping problems, so the labels themselves are ambiguous. That overlap, not the model size, is the main ceiling on accuracy.
 - For real routing, showing the **top-3 queues** to the triage agent is safer than auto-assigning the top prediction for those three queues.
 
 ## Run it
+
+Tested with Python 3.13 (Google Colab, November 2026).
 
 ```bash
 git clone https://github.com/im-preshanth/support-ticket-classifier.git
@@ -99,11 +102,14 @@ python -m src.baseline
 # Fine-tuning: open notebooks/ticket_classifier.ipynb in Google Colab,
 # select a T4 GPU, and run all cells. It saves the model to ticket_model.zip.
 
-# Predict with the trained model (unzip ticket_model.zip into ./model first)
+# Predict with the published model (downloaded from Hugging Face on first use, no training needed)
+MODEL_ID=preshanth09/support-ticket-classifier python -m src.predict "I was charged twice for my subscription this month"
+
+# Or with a model you trained yourself (unzip ticket_model.zip into ./model)
 python -m src.predict "I was charged twice for my subscription this month"
 
-# Demo
-python app/app.py
+# Local demo (uses the published model)
+MODEL_ID=preshanth09/support-ticket-classifier python app/app.py
 ```
 
 ## Project structure
@@ -120,6 +126,7 @@ support-ticket-classifier/
 │   ├── confusion_matrix.png
 │   └── results.csv
 ├── MODEL_CARD.md
+├── LICENSE
 └── requirements.txt
 ```
 
